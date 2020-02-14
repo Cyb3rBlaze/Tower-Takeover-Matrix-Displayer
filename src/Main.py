@@ -102,10 +102,10 @@ def render(gamedisplay, text, font, font2, color, timer, dictionary):
     stats = dictionary
     coords = [(475,78), (304,145), (205,350), (390,485), (550,485), (695,345), (656,148)]
 
-    node_coords = [(500, 300 - (200*(57-stats["rank"])/57)), (500 - (156*(stats["wins"])/8), 300 - (125*(stats["wins"]/8))),
-                       (500 - (195*(6-stats["losses"])/6), 300 + (45*(6-stats["losses"])/6)), (500-(87*stats["ccwm"]/16), 300 + (180*stats["ccwm"]/16)),
-                       (500 + (87*stats["max_score"]/41), 300+(180*stats["max_score"]/41)), (500 + (195*stats["opr"]/22), 300+(45*stats["opr"]/22)),
-                       (500 + (156*(12.4-stats["dpr"])/12.4), 300 - (125*(12.4-stats["dpr"])/12.4))]
+    node_coords = [(500, 300 - (200*(70-stats["rank"])/69)), (500 - (156*(stats["wins"])/8), 300 - (125*(stats["wins"]/8))),
+                       (500 - (195*(6-stats["losses"])/6), 300 + (45*(6-stats["losses"])/6)), (500-(87*stats["ccwm"]/20), 300 + (180*stats["ccwm"]/20)),
+                       (500 + (87*stats["max_score"]/70), 300+(180*stats["max_score"]/70)), (500 + (195*stats["opr"]/20), 300+(45*stats["opr"]/20)),
+                       (500 + (156*(15-stats["dpr"])/15), 300 - (125*(15-stats["dpr"])/15))]
 
     index = 0
     for i in stats:
@@ -118,7 +118,7 @@ def render(gamedisplay, text, font, font2, color, timer, dictionary):
         index += 1
 
     chance_surface = font.render("Chance of Winning", True, (190, 190, 190))
-    chanceOfWinning = (((57-stats["rank"])/57)+((stats["wins"])/16)+(stats["opr"]/22))/3
+    chanceOfWinning = (((70-stats["rank"])/69)+((stats["wins"])/12)+(stats["opr"]/20))/3
 
     gamedisplay.blit(chance_surface, ((500+(chanceOfWinning*200))/2, 690))
     percent_surface = font.render(str(int(chanceOfWinning * 10000)/100)+"%", True, (190, 190, 190))
@@ -133,7 +133,7 @@ def render(gamedisplay, text, font, font2, color, timer, dictionary):
     gamedisplay.blit(predict_surface, (button_box.x + 23, button_box.y + 15))
     pg.draw.rect(gamedisplay, (209, 226, 255), (200, 620, (400*chanceOfWinning), 50))
 
-    pg.draw.polygon(gamedisplay, ((255 - (300 * chanceOfWinning)), 300 * chanceOfWinning, 0), node_coords)
+    pg.draw.polygon(gamedisplay, ((255 - (255 * chanceOfWinning)), 255 * chanceOfWinning, 0), node_coords)
 
     for event in pg.event.get():
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -171,4 +171,33 @@ def returnStats(teamName):
             count += 1
     if count == 0:
         return 0
-    return {"rank":rank/count, "wins":wins/count, "losses":losses/count, "ccwm":ccwm/count, "max_score":max_score/count, "opr":opr/count, "dpr":dpr/count}
+
+    final_rank = rank/count
+    final_ccwm = ccwm/count
+    final_wins = wins/count
+    final_score = max_score/count
+    final_losses = losses/count
+    final_opr = opr/count
+    final_dpr = dpr/count
+
+    if rank/count > 69:
+        final_rank = 69
+    if ccwm/count > 20:
+        final_ccwm = 20
+    elif ccwm/count < 0:
+        final_ccwm = 0
+    if wins/count > 8:
+        final_wins = 8
+    if max_score/count > 70:
+        final_score = 70
+    if losses/count > 6:
+        final_score = 6
+    if opr/count > 20:
+        final_opr = 20
+    elif opr/count < 0:
+        final_opr = 0
+    if dpr/count > 15:
+        final_dpr = 15
+    elif dpr/count < 0:
+        final_dpr = 0
+    return {"rank":final_rank, "wins":final_wins, "losses":final_losses, "ccwm":final_ccwm, "max_score":final_score, "opr":final_opr, "dpr":final_dpr}
